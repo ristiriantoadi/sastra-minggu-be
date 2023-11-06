@@ -1,0 +1,8 @@
+from config.mongo import MGDB_LIBRARY
+
+TESTS = MGDB_LIBRARY.tests
+ADMIN = MGDB_LIBRARY.admins
+MEMBER = MGDB_LIBRARY.members
+BOOK = MGDB_LIBRARY.books
+BORROW = MGDB_LIBRARY.borrows
+FEE = MGDB_LIBRARY.fees
