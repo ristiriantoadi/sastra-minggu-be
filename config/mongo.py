@@ -12,10 +12,10 @@ class MongoConnect:
     def __new__(cls):
         if cls.__instance is None:
             logger.info(f"Initialize mongo instance connection")
-            client = AsyncIOMotorClient(
-                "mongodb+srv://ristiriantoadi:NBAg6WESr4M%3E6nY@cluster0.rurgtmw.mongodb.net/"
-            )
-            # client = AsyncIOMotorClient("mongodb://localhost:27017/")
+            # client = AsyncIOMotorClient(
+            #     "mongodb+srv://ristiriantoadi:NBAg6WESr4M%3E6nY@cluster0.rurgtmw.mongodb.net/"
+            # )
+            client = AsyncIOMotorClient("mongodb://localhost:27017/")
             client.get_io_loop = asyncio.get_event_loop
             cls.__instance = client
             return client
@@ -32,4 +32,4 @@ class MongoConnect:
 
 
 MGDB_CLIENT = MongoConnect()
-MGDB_LIBRARY = MGDB_CLIENT[DB]
+MGDB_SASTRA_MINGGU = MGDB_CLIENT[DB]

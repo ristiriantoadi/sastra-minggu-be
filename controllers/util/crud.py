@@ -4,16 +4,19 @@ from typing import List
 from beanie import PydanticObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
 
-from models.default.auth import TokenData
+from models.authentication.authentication import TokenData
 
 
-async def find_on_db(collection: AsyncIOMotorCollection, criteria: dict):
+async def find_one_on_db(collection: AsyncIOMotorCollection, criteria: dict):
     criteria["isDelete"] = False
     return await collection.find_one(criteria)
 
 
-async def insert_on_db(collection: AsyncIOMotorCollection, data: dict):
+async def insert_one_on_db(
+    collection: AsyncIOMotorCollection, data: dict, currentUser: TokenData
+):
     data["createTime"] = datetime.utcnow()
+    data["creatorId"] = currentUser.userId
     op = await collection.insert_one(data)
     return await collection.find_one(op.inserted_id)
 

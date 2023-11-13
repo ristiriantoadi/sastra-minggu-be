@@ -1,5 +1,5 @@
 # MGDB
-DB = "library"
+DB = "sastra_minggu"
 
 INIT_KEY = "SindAi78812"
 

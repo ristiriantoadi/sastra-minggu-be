@@ -1,36 +1,26 @@
-from datetime import datetime, timedelta
-
-import jwt
-from beanie import PydanticObjectId
 from fastapi import Depends, HTTPException
-from jose import JWTError
 
-from config.config import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
-from controllers.util.authentication import oauth2_scheme_member
-from models.authentication.authentication import TokenData
+from controllers.auth.authentication import (
+    PWDCONTEXT,
+    create_token,
+    get_current_user,
+    oauth2_scheme_member,
+)
+from controllers.member.member_crud import find_member_on_db
 
 
 def get_current_user_member(token: str = Depends(oauth2_scheme_member)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        tokenData = TokenData(
-            userId=payload.get("userId"),
-            exp=payload.get("exp"),
-        )
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Token tidak valid")
-
-    return tokenData
+    return get_current_user(token)
 
 
 def create_token_for_member(member: dict):
-    data = TokenData(
-        userId=str(member["_id"]),
-        exp=datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
-    encoded_jwt = jwt.encode(data.dict(), SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return create_token(member)
 
 
 async def authenticate_member(username: str, password: str):
-    return {"_id": PydanticObjectId()}
+    member = await find_member_on_db(criteria={"username": username.strip()})
+    if member is None:
+        raise HTTPException(status_code=401, detail="Username atau password salah")
+    if not PWDCONTEXT.verify(password.strip(), member["credential"]["password"]):
+        raise HTTPException(status_code=401, detail="Username atau password salah")
+    return member

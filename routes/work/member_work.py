@@ -16,3 +16,10 @@ async def member_add_work(
     input: InputAddWork, currentUser: TokenData = Depends(get_current_user_member)
 ):
     print("current user", currentUser)
+
+
+@route_member_work.get("")
+async def member_get_list_work(
+    currentUser: TokenData = Depends(get_current_user_member),
+):
+    pass
