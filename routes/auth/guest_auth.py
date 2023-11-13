@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
+from controllers.auth.authentication import PWDCONTEXT
 from controllers.auth.member import authenticate_member, create_token_for_member
+from controllers.member.member_crud import insert_member_to_db
 from models.authentication.auth_dto import InputRegistration
+from models.user.member import Member
 
 route_guest_auth = APIRouter(
     prefix="/guest/auth",
@@ -22,4 +25,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @route_guest_auth.post("/register")
 async def register(input: InputRegistration):
-    pass
+    member = Member(
+        username=input.username,
+        name=input.name,
+        credential={"password": PWDCONTEXT.encrypt(input.password)},
+    )
+    await insert_member_to_db(member)
+    return "OK"

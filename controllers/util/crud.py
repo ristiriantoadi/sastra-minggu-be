@@ -13,10 +13,11 @@ async def find_one_on_db(collection: AsyncIOMotorCollection, criteria: dict):
 
 
 async def insert_one_on_db(
-    collection: AsyncIOMotorCollection, data: dict, currentUser: TokenData
+    collection: AsyncIOMotorCollection, data: dict, currentUser: TokenData = None
 ):
     data["createTime"] = datetime.utcnow()
-    data["creatorId"] = currentUser.userId
+    if currentUser:
+        data["creatorId"] = currentUser.userId
     op = await collection.insert_one(data)
     return await collection.find_one(op.inserted_id)
 

@@ -6,8 +6,8 @@ from pydantic import BaseModel
 
 
 class DefaultModel(BaseModel):
-    createTime: datetime
-    creatorId: PydanticObjectId
+    createTime: datetime = datetime.utcnow()
+    creatorId: PydanticObjectId = None
 
     updateTime: datetime = None
     updaterId: PydanticObjectId = None
