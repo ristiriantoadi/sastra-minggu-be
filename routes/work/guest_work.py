@@ -11,7 +11,7 @@ route_guest_work = APIRouter(
 )
 
 
-@route_guest_work.get("")
+@route_guest_work.get("", response_model=OutputGetListWorks)
 async def guest_get_list_work(
     dir: PaginationDir,
     page: int = 0,

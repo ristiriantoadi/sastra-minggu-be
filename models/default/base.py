@@ -34,7 +34,7 @@ class PaginationDir(IntEnum, Enum):
     DESC = -1
 
 
-class OutputList(BaseModel):
+class OutputListPagination(BaseModel):
     content: List[Any] = []
     totalElements: int
     totalPages: int

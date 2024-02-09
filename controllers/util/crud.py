@@ -6,7 +6,7 @@ from beanie import PydanticObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
 
 from models.authentication.authentication import TokenData
-from models.default.base import OutputList, PaginationDir
+from models.default.base import OutputListPagination, PaginationDir
 
 
 async def find_one_on_db(collection: AsyncIOMotorCollection, criteria: dict):
@@ -36,12 +36,12 @@ async def get_list_on_db(
     dir: PaginationDir = -1,
     criteria: dict = {},
     size: int = 10,
-) -> OutputList:
+) -> OutputListPagination:
     criteria["isDelete"] = False
     cursor = collection.find(criteria).sort(sort, dir)
     data = await cursor.to_list(length=None)
     totalElements = await collection.count_documents(criteria)
-    return OutputList(
+    return OutputListPagination(
         content=data,
         totalElements=totalElements,
         totalPages=math.ceil(totalElements / size),

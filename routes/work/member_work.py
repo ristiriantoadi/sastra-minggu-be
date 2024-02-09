@@ -4,13 +4,14 @@ from fastapi import APIRouter, Depends, File, Form, UploadFile
 
 from controllers.auth.member import get_current_user_member
 from controllers.work.work_crud import (
+    add_additional_data_works,
     find_works,
     insert_work_to_db,
-    validate_publication_proof,
+    validate_publication_proof_must_exist,
 )
 from models.authentication.authentication import TokenData
 from models.default.base import PaginationDir
-from models.work.work_dto import OutputGetListWorks
+from models.work.work_dto import OutputGetListWorksPrivate
 from models.work.work_enum import WorkTypeEnum
 
 route_member_work = APIRouter(
@@ -31,33 +32,38 @@ async def member_add_work(
     publicationProofFile: UploadFile = File(None),
     currentUser: TokenData = Depends(get_current_user_member),
 ):
-    validate_publication_proof(link=publicationProofLink, file=publicationProofFile)
+    validate_publication_proof_must_exist(
+        link=publicationProofLink, file=publicationProofFile
+    )
     await insert_work_to_db(
         title=title,
         author=author,
         workType=workType,
         media=media,
         publicationDate=publicationDate,
-        publicationProof=publicationProofLink,
+        publicationProofLink=publicationProofLink,
+        publicationProofFile=publicationProofFile,
+        currentUser=currentUser,
     )
     return "OK"
 
 
-@route_member_work.get("", response_model=OutputGetListWorks)
+@route_member_work.get("", response_model=OutputGetListWorksPrivate)
 async def member_get_list_work(
     dir: PaginationDir,
-    page: int,
-    sortBy: str = "createTime",
+    page: int = 0,
+    sort: str = "createTime",
     size: int = 10,
     currentUser: TokenData = Depends(get_current_user_member),
 ):
-    data = await find_works(sortBy=sortBy, page=page, size=size, dir=dir)
-    return OutputGetListWorks(
+    data = await find_works(sort=sort, page=page, size=size, dir=dir, criteria={})
+    data.content = add_additional_data_works(data=data.content, currentUser=currentUser)
+    return OutputGetListWorksPrivate(
         size=size,
         page=page,
         totalElements=data.totalElements,
         totalPages=data.totalPages,
-        sortBy=sortBy,
+        sortBy=sort,
         sortDir=dir,
         content=data.content,
     )

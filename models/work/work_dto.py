@@ -1,12 +1,14 @@
 from datetime import date
 from typing import List
 
-from pydantic import BaseModel
+from beanie import PydanticObjectId
+from pydantic import BaseModel, Field
 
 from models.default.base import DefaultPage
 
 
 class DataOutputGetListWork(BaseModel):
+    id: PydanticObjectId = Field(alias="_id")
     title: str
     author: str
     workType: str
@@ -17,3 +19,19 @@ class DataOutputGetListWork(BaseModel):
 
 class OutputGetListWorks(DefaultPage):
     content: List[DataOutputGetListWork]
+
+
+class DataOutputGetListWorkPrivate(BaseModel):
+    id: PydanticObjectId = Field(alias="_id")
+    creatorId: PydanticObjectId
+    title: str
+    author: str
+    workType: str
+    media: str
+    publicationDate: date
+    publicationProof: str
+    isEditable: bool = False
+
+
+class OutputGetListWorksPrivate(DefaultPage):
+    content: List[DataOutputGetListWorkPrivate]

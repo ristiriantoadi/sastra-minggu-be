@@ -32,25 +32,12 @@ def delete_file(path: str):
     os.remove(path)
 
 
-async def upload_file_v2(file: UploadFile, featureFolder: str):
+async def upload_file(file: UploadFile, featureFolder: str):
     blob = bucket.blob(
         "{featureFolder}/{filename}".format(
             featureFolder=featureFolder, filename=file.filename
         )
     )
     blob.upload_from_file(file.file)
-    blob.make_public()
-    return blob.public_url
-
-
-async def upload_file(file: UploadFile, featureFolder: str):
-    path = save_file_to_tmp(file)
-    blob = bucket.blob(
-        "{featureFolder}/{filename}".format(
-            featureFolder=featureFolder, filename=file.filename
-        )
-    )
-    blob.upload_from_filename(path)
-    delete_file(path)
     blob.make_public()
     return blob.public_url
