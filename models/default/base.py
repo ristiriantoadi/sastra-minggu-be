@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum, IntEnum
 from typing import Any, List
 
 from beanie import PydanticObjectId
@@ -26,3 +27,14 @@ class DefaultPage(BaseModel):
     sortBy: str
     sortDir: int
     content: List[Any] = []
+
+
+class PaginationDir(IntEnum, Enum):
+    ASC = 1
+    DESC = -1
+
+
+class OutputList(BaseModel):
+    content: List[Any] = []
+    totalElements: int
+    totalPages: int

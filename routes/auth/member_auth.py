@@ -13,7 +13,7 @@ route_member_auth = APIRouter(
 )
 
 
-@route_member_auth.post("/check_token", response_model=OutputCheckToken)
+@route_member_auth.get("/check_token", response_model=OutputCheckToken)
 async def check_token(current_user: TokenData = Depends(get_current_user_member)):
     member = await find_member_on_db({"_id": PydanticObjectId(current_user.userId)})
     return member

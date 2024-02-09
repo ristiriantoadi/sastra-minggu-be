@@ -1,3 +1,4 @@
+import math
 from datetime import datetime
 from typing import List
 
@@ -5,6 +6,7 @@ from beanie import PydanticObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
 
 from models.authentication.authentication import TokenData
+from models.default.base import OutputList, PaginationDir
 
 
 async def find_one_on_db(collection: AsyncIOMotorCollection, criteria: dict):
@@ -31,15 +33,19 @@ async def insert_many_on_db(collection: AsyncIOMotorCollection, data: List[dict]
 async def get_list_on_db(
     collection: AsyncIOMotorCollection,
     sort: str = "createTime",
-    dir: int = -1,
+    dir: PaginationDir = -1,
     criteria: dict = {},
-):
+    size: int = 10,
+) -> OutputList:
     criteria["isDelete"] = False
     cursor = collection.find(criteria).sort(sort, dir)
     data = await cursor.to_list(length=None)
-    return {
-        "data": data,
-    }
+    totalElements = await collection.count_documents(criteria)
+    return OutputList(
+        content=data,
+        totalElements=totalElements,
+        totalPages=math.ceil(totalElements / size),
+    )
 
 
 async def get_count_on_db(
