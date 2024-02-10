@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, File, Form, UploadFile
 from controllers.auth.member import get_current_user_member
 from controllers.work.work_crud import (
     add_additional_data_works,
+    delete_work,
     find_works,
     get_filter_list_work,
     insert_work_to_db,
@@ -89,3 +90,12 @@ async def member_get_list_work(
         sortDir=dir,
         content=data.content,
     )
+
+
+@route_member_work.delete("/{workId}")
+async def member_delete_work(
+    workId: str,
+    currentUser: TokenData = Depends(get_current_user_member),
+):
+    await delete_work(workId=workId, currentUser=currentUser)
+    return "OK"

@@ -1,9 +1,10 @@
 from datetime import date, datetime
 
+from beanie import PydanticObjectId
 from fastapi import HTTPException, UploadFile
 
 from config.mongo_collection import WORK
-from controllers.util.crud import get_list_on_db
+from controllers.util.crud import delete_on_db, get_list_on_db
 from controllers.util.upload_file import upload_file
 from models.authentication.authentication import TokenData
 from models.default.base import OutputListPagination, PaginationDir
@@ -35,6 +36,7 @@ async def insert_work_to_db(
     if publicationProofLink is None:
         publicationProofLink = await upload_publication_proof(publicationProofFile)
     data = Work(
+        createTime=datetime.utcnow(),
         creatorId=currentUser.userId,
         title=title,
         author=author,
@@ -84,3 +86,11 @@ def get_filter_list_work(
         endDate = datetime.combine(endDate, datetime.max.time())
         filter["publicationDate"] = {"$gte": startDate, "$lte": endDate}
     return filter
+
+
+async def delete_work(workId: str, currentUser: TokenData):
+    await delete_on_db(
+        collection=WORK,
+        criteria={"_id": PydanticObjectId(workId)},
+        currentUser=currentUser,
+    )

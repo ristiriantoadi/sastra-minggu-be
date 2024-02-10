@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import jwt
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError
 from passlib.context import CryptContext
 
 from config.config import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
@@ -31,7 +30,7 @@ def get_current_user(token: str):
             userId=payload.get("userId"),
             exp=payload.get("exp"),
         )
-    except JWTError:
+    except Exception:
         raise HTTPException(status_code=401, detail="Token tidak valid")
 
     return tokenData
