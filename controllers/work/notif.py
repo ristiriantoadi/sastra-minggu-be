@@ -21,3 +21,10 @@ async def get_notif_counts(currentUser: TokenData):
     if notif is None:
         return 0
     return notif["count"]
+
+
+async def reset_notif_counts(currentUser: TokenData):
+    await COUNT_NOTIF.update_one(
+        {"userId": PydanticObjectId(currentUser.userId)},
+        {"$set": {"count": 0}},
+    )
