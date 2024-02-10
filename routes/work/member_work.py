@@ -51,7 +51,8 @@ async def member_add_work(
         currentUser=currentUser,
         authorId=authorId,
     )
-    await increment_count_notifs(authorId)
+    if authorId:
+        await increment_count_notifs(authorId)
     return "OK"
 
 
