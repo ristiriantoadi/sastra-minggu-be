@@ -4,6 +4,7 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 
 from controllers.auth.member import get_current_user_member
+from controllers.work.notif import increment_count_notifs
 from controllers.work.work_crud import (
     add_additional_data_works,
     delete_work,
@@ -50,6 +51,7 @@ async def member_add_work(
         currentUser=currentUser,
         authorId=authorId,
     )
+    await increment_count_notifs(currentUser=currentUser)
     return "OK"
 
 
