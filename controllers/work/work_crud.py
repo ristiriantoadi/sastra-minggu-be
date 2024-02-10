@@ -58,3 +58,27 @@ def add_additional_data_works(data: dict, currentUser: TokenData):
         if str(d["creatorId"]) == currentUser.userId:
             d["isEditable"] = True
     return data
+
+
+def get_filter_list_work(
+    title: str = None,
+    author: str = None,
+    workType: WorkTypeEnum = None,
+    media: str = None,
+    startDate: date = None,
+    endDate: date = None,
+):
+    filter = {}
+    if title:
+        filter["title"] = title
+    if author:
+        filter["author"] = author
+    if workType:
+        filter["workType"] = workType
+    if media:
+        filter["media"] = media
+    if startDate and endDate:
+        startDate = datetime.combine(startDate, datetime.min.time())
+        endDate = datetime.combine(endDate, datetime.max.time())
+        filter["publicationDate"] = {"$gte": startDate, "$lte": endDate}
+    return filter
