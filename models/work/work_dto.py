@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import List
 
 from beanie import PydanticObjectId
@@ -9,6 +9,7 @@ from models.default.base import DefaultPage
 
 class DataOutputGetListWork(BaseModel):
     id: PydanticObjectId = Field(alias="_id")
+    createTime: datetime
     title: str
     author: str
     workType: str
@@ -23,6 +24,7 @@ class OutputGetListWorks(DefaultPage):
 
 class DataOutputGetListWorkPrivate(BaseModel):
     id: PydanticObjectId = Field(alias="_id")
+    createTime: datetime
     creatorId: PydanticObjectId
     title: str
     author: str

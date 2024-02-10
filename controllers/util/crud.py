@@ -38,6 +38,7 @@ async def get_list_on_db(
     size: int = 10,
 ) -> OutputListPagination:
     criteria["isDelete"] = False
+    print("dir", dir)
     cursor = collection.find(criteria).sort(sort, dir)
     data = await cursor.to_list(length=None)
     totalElements = await collection.count_documents(criteria)

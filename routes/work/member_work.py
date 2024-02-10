@@ -50,7 +50,7 @@ async def member_add_work(
 
 @route_member_work.get("", response_model=OutputGetListWorksPrivate)
 async def member_get_list_work(
-    dir: PaginationDir,
+    dir: PaginationDir = PaginationDir.DESC,
     page: int = 0,
     sort: str = "createTime",
     size: int = 10,
