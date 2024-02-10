@@ -1,5 +1,6 @@
 from datetime import date
 
+from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 
 from controllers.auth.member import get_current_user_member
@@ -13,7 +14,7 @@ from controllers.work.work_crud import (
 )
 from models.authentication.authentication import TokenData
 from models.default.base import PaginationDir
-from models.work.work_dto import OutputGetListWorksPrivate
+from models.work.work_dto import OutputGetListWorks, OutputGetListWorksPrivate
 from models.work.work_enum import WorkTypeEnum
 
 route_member_work = APIRouter(
@@ -99,3 +100,29 @@ async def member_delete_work(
 ):
     await delete_work(workId=workId, currentUser=currentUser)
     return "OK"
+
+
+@route_member_work.get("/my_work", response_model=OutputGetListWorks)
+async def member_get_my_work(
+    dir: PaginationDir = PaginationDir.DESC,
+    page: int = 0,
+    sort: str = "createTime",
+    size: int = 10,
+    currentUser: TokenData = Depends(get_current_user_member),
+):
+    data = await find_works(
+        size=size,
+        page=page,
+        sort=sort,
+        dir=dir,
+        criteria={"authorId": PydanticObjectId(currentUser.userId)},
+    )
+    return OutputGetListWorks(
+        size=size,
+        page=page,
+        totalElements=data.totalElements,
+        totalPages=data.totalPages,
+        sortBy=sort,
+        sortDir=dir,
+        content=data.content,
+    )
