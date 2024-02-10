@@ -31,6 +31,7 @@ async def member_add_work(
     publicationDate: date = Form(...),
     publicationProofLink: str = Form(None),
     publicationProofFile: UploadFile = File(None),
+    authorId: str = Form(None),
     currentUser: TokenData = Depends(get_current_user_member),
 ):
     validate_publication_proof_must_exist(
@@ -45,6 +46,7 @@ async def member_add_work(
         publicationProofLink=publicationProofLink,
         publicationProofFile=publicationProofFile,
         currentUser=currentUser,
+        authorId=authorId,
     )
     return "OK"
 

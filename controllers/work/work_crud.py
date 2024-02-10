@@ -29,6 +29,7 @@ async def insert_work_to_db(
     currentUser: TokenData,
     publicationProofLink: str = None,
     publicationProofFile: UploadFile = None,
+    authorId: str = None,
 ):
     publicationDate = datetime.combine(publicationDate, datetime.min.time())
     if publicationProofLink is None:
@@ -41,6 +42,7 @@ async def insert_work_to_db(
         media=media,
         publicationDate=publicationDate,
         publicationProof=publicationProofLink,
+        authorId=authorId,
     )
     await WORK.insert_one(data.dict())
 
