@@ -48,7 +48,9 @@ async def insert_work_to_db(
 async def find_works(
     size: int, page: int, sort: str, dir: PaginationDir, criteria: dict
 ) -> OutputListPagination:
-    return await get_list_on_db(collection=WORK, sort=sort, dir=dir, criteria=criteria)
+    return await get_list_on_db(
+        collection=WORK, sort=sort, dir=dir, criteria=criteria, size=size, page=page
+    )
 
 
 def add_additional_data_works(data: dict, currentUser: TokenData):
