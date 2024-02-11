@@ -20,7 +20,7 @@ async def member_get_count_notifs(
     return {"count": count}
 
 
-@route_member_notif.get("/reset_count")
+@route_member_notif.put("/reset_count")
 async def member_reset_count_notifs(
     currentUser: TokenData = Depends(get_current_user_member),
 ):

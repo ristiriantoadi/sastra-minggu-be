@@ -4,7 +4,7 @@ from beanie import PydanticObjectId
 from fastapi import HTTPException, UploadFile
 
 from config.mongo_collection import WORK
-from controllers.util.crud import delete_on_db, get_list_on_db
+from controllers.util.crud import delete_on_db, get_list_on_db, update_on_db
 from controllers.util.upload_file import upload_file
 from models.authentication.authentication import TokenData
 from models.default.base import OutputListPagination, PaginationDir
@@ -93,4 +93,36 @@ async def delete_work(workId: str, currentUser: TokenData):
         collection=WORK,
         criteria={"_id": PydanticObjectId(workId)},
         currentUser=currentUser,
+    )
+
+
+async def edit_work(
+    workId: str,
+    title: str,
+    author: str,
+    workType: WorkTypeEnum,
+    media: str,
+    publicationDate: date,
+    publicationProofLink: str,
+    currentUser: TokenData,
+    publicationProofFile: UploadFile = None,
+    authorId: str = None,
+):
+    publicationDate = datetime.combine(publicationDate, datetime.min.time())
+    if publicationProofLink is None:
+        publicationProofLink = await upload_publication_proof(publicationProofFile)
+
+    await update_on_db(
+        collection=WORK,
+        updateData={
+            "author": author,
+            "title": title,
+            "workType": workType,
+            "media": media,
+            "publicationDate": publicationDate,
+            "publicationProof": publicationProofLink,
+            "authorId": PydanticObjectId(authorId) if authorId else None,
+        },
+        currentUser=currentUser,
+        criteria={"_id": PydanticObjectId(workId)},
     )

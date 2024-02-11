@@ -8,6 +8,7 @@ from controllers.work.notif import increment_count_notifs
 from controllers.work.work_crud import (
     add_additional_data_works,
     delete_work,
+    edit_work,
     find_works,
     get_filter_list_work,
     insert_work_to_db,
@@ -128,4 +129,34 @@ async def member_get_my_work(
         sortBy=sort,
         sortDir=dir,
         content=data.content,
+    )
+
+
+@route_member_work.put("/{workId}")
+async def member_edit_work(
+    workId: str,
+    title: str = Form(...),
+    author: str = Form(...),
+    workType: WorkTypeEnum = Form(...),
+    media: str = Form(...),
+    publicationDate: date = Form(...),
+    publicationProofLink: str = Form(None),
+    publicationProofFile: UploadFile = File(None),
+    authorId: str = Form(None),
+    currentUser: TokenData = Depends(get_current_user_member),
+):
+    validate_publication_proof_must_exist(
+        link=publicationProofLink, file=publicationProofFile
+    )
+    await edit_work(
+        workId=workId,
+        title=title,
+        author=author,
+        workType=workType,
+        media=media,
+        publicationDate=publicationDate,
+        publicationProofLink=publicationProofLink,
+        publicationProofFile=publicationProofFile,
+        authorId=authorId,
+        currentUser=currentUser,
     )
