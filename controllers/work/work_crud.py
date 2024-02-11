@@ -68,7 +68,7 @@ async def add_additional_data_works(data: dict, currentUser: TokenData):
                     {"_id": PydanticObjectId(d["authorId"])}
                 )
                 d["author"] = f"{d['author']} (@{member['username']})"
-        return data
+    return data
 
 
 def get_filter_list_work(
