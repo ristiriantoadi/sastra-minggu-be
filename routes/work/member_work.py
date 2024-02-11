@@ -85,7 +85,9 @@ async def member_get_list_work(
             endDate=endDate,
         ),
     )
-    data.content = add_additional_data_works(data=data.content, currentUser=currentUser)
+    data.content = await add_additional_data_works(
+        data=data.content, currentUser=currentUser
+    )
     return OutputGetListWorksPrivate(
         size=size,
         page=page,

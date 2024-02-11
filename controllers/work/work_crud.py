@@ -4,6 +4,7 @@ from beanie import PydanticObjectId
 from fastapi import HTTPException, UploadFile
 
 from config.mongo_collection import WORK
+from controllers.member.member_crud import find_member_on_db
 from controllers.util.crud import delete_on_db, get_list_on_db, update_on_db
 from controllers.util.upload_file import upload_file
 from models.authentication.authentication import TokenData
@@ -57,11 +58,17 @@ async def find_works(
     )
 
 
-def add_additional_data_works(data: dict, currentUser: TokenData):
+async def add_additional_data_works(data: dict, currentUser: TokenData):
     for d in data:
         if str(d["creatorId"]) == currentUser.userId:
             d["isEditable"] = True
-    return data
+        if "authorId" in d:
+            if d["authorId"]:
+                member = await find_member_on_db(
+                    {"_id": PydanticObjectId(d["authorId"])}
+                )
+                d["author"] = f"{d['author']} (@{member['username']})"
+        return data
 
 
 def get_filter_list_work(
